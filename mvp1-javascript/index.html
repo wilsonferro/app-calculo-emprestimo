@@ -1,5 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
     <title>Cálculo de Empréstimos</title>
     <style>
         .entrada {
@@ -10,41 +12,125 @@
             padding: 0.25em;
         }
     </style>
+    <script>
+        function calcularValorDaParcelaFixaMensalDeUmEmprestimo(valorEmprestado, mesesParaPagar, taxaFixaMensal) {
+            var taxaDividida = taxaFixaMensal / 100;
+            var taxaPotencializada = Math.pow(1 + taxaDividida, mesesParaPagar);
+            var valorParcela = valorEmprestado * (taxaPotencializada * taxaDividida) / (taxaPotencializada - 1);
+
+            var total = valorParcela * mesesParaPagar;
+            var juros = total - valorEmprestado;
+
+            // Fonte: https://stackoverflow.com/questions/4912788/truncate-not-round-off-decimal-numbers-in-javascript
+            Number.prototype.toFixedDown = function(digits) {
+                var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)"),
+                    m = this.toString().match(re);
+                return m ? parseFloat(m[1]) : this.valueOf();
+            };
+
+            var resultado = {
+                input: {
+                    valorEmprestado: valorEmprestado,
+                    mesesParaPagar: mesesParaPagar,
+                    taxaFixaMensal: taxaFixaMensal
+                },
+                output: {
+                    parcelaFixaMensal: valorParcela.toFixedDown(2),
+                    juros: juros.toFixedDown(2),
+                    total: total.toFixedDown(2)
+                }
+            };
+
+            return resultado;
+        }
+
+        function getResultadoDisplay() {
+            var display = {
+                main: document.getElementById('resultadoDisplay'),
+                pegou: document.getElementById('pegouDisplay'),
+                parcelas: document.getElementById('parcelasDisplay'),
+                valorPrestacao: document.getElementById('valorPrestacaoDisplay'),
+                juros: document.getElementById('jurosDisplay'),
+                total: document.getElementById('totalDisplay')
+            }
+
+            return display;
+        }
+
+        function getInputUsuario() {
+            var valorEmprestado = document.getElementById('valor').value;
+            var mesesParaPagar = document.getElementById('meses').value;
+            var taxaFixaMensal = document.getElementById('taxa').value;
+
+            return {
+                valorEmprestado: valorEmprestado,
+                mesesParaPagar: mesesParaPagar,
+                taxaFixaMensal: taxaFixaMensal
+            }
+        }
+
+        function calcular_e_mostrarResultado() {
+            var inputUsuario = getInputUsuario();
+            var resultado = calcularValorDaParcelaFixaMensalDeUmEmprestimo(
+                inputUsuario.valorEmprestado,
+                inputUsuario.mesesParaPagar,
+                inputUsuario.taxaFixaMensal
+            );
+
+            var display = getResultadoDisplay();
+            display.pegou.innerText = resultado.input.valorEmprestado;
+            display.parcelas.innerText = resultado.input.mesesParaPagar;
+            display.valorPrestacao.innerText = resultado.output.parcelaFixaMensal;
+            display.juros.innerText = resultado.output.juros;
+            display.total.innerText = resultado.output.total;
+
+            display.main.style.display = '';
+            document.getElementById('limparButton').disabled = false;
+        }
+
+        function limparResultado() {
+            getResultadoDisplay().main.style.display = 'none';
+            document.getElementById('limparButton').disabled = true;
+        }
+    </script>
 </head>
 <body>
 
 <h1>Cálculo de Empréstimos</h1>
 
 <div class="entrada">
-    <label for="valor">Valor do empréstimo:</label>
-    <input type="number" id="valor" value="6000.00" placeholder="0.00">
+    <label for="valor">Valor emprestado:</label>
+    <input type="number" id="valor" value="1000.00" placeholder="0.00">
 </div>
 
 <div class="entrada">
-    <label for="parcelas">Quantidade de parcelas:</label>
-    <input type="number" id="parcelas" value="10" placeholder="0">
+    <label for="meses">Meses para pagar:</label>
+    <input type="number" id="meses" value="10" placeholder="0">
 </div>
 
 <div class="entrada">
-    <label for="juros">Taxa de juros ao mês:</label>
+    <label for="taxa">Taxa fixa mensal:</label>
     <input type="number" id="taxa" value="1.00" placeholder="0.00">
 </div>
 
 <div>
-    <input type="button" value="Calcular">
+    <input type="button" id="calcularButton" value="Calcular" onclick="calcular_e_mostrarResultado()">
+    <input type="button" id="limparButton" value="Limpar" onclick="limparResultado()" disabled>
 </div>
 
-<div>
-    <h3>Você pagará:</h3>
-    <h1><span class="destaque"><small>10x </small> R$ 633,49</span></h1>
-</div>
+<div id="resultadoDisplay" style="display: none;">
+    <div>
+        <h3>Você pegou R$ <span id="pegouDisplay"></span> e pagará:</h3>
+        <h1><span class="destaque"><small><span id="parcelasDisplay">?</span>x </small> R$ <span id="valorPrestacaoDisplay">?</span></h1>
+    </div>
 
-<div>
-    Detalhes:
-    <ul>
-        <li>Juros: <strong>R$ 334,92</strong></li>
-        <li>Total: <strong>R$ 6.334,92</strong></li>
-    </ul>
+    <div>
+        Detalhes:
+        <ul>
+            <li>Juros: <strong>R$ <span id="jurosDisplay">?</span></strong></li>
+            <li>Total: <strong>R$ <span id="totalDisplay">?</span></strong></li>
+        </ul>
+    </div>
 </div>
 
 </body>
