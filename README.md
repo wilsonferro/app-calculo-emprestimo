@@ -1,12 +1,12 @@
 # Aplicativo de Cálculo de Empréstimos
 
-A ideia é criar um app que calcule o valor da parcela dado um valor de empréstimo, a quantidade de parcelas fixas mensais e a taxa de juros mensais.
+A ideia é criar um app que calcule o valor fixo da prestação de um empréstimo monetário, dado um valor de empréstimo, a quantidade de parcelas mensais e a taxa fixa de juros mensais.
 
 Exemplo:
 
-Valor do empréstimo: **R$ 6.000,00**
-Quantidade de parcelas: **10**
-Taxa de juros ao mês: **1,00**
+Valor emprestado: **R$ 6.000,00**
+Meses para pagar: **10**
+Taxa fixa mensal: **1,00**
 
 Você pagará **10** parcelas fixas mensais de **R$ 633,49**.
 
